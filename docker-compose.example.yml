@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  app:
+    image: rankor777/social-credit-bot:x.y.z
+    volumes:
+      - ./data:/data/
+    restart: always

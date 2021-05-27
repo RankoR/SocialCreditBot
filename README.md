@@ -49,6 +49,15 @@ _Replace `x.y.z` with an actual version_
 
 Now run `docker-compose up -d`.
 
+## Usage
+
+Add bot in group, then reply on some message with one of [these](https://t.me/addstickers/PoohSocialCredit) two stickers.
+
+Bot also supports two commands:
+
+- `/rating` — prints 50 random users (TODO: Add ordering) ratings
+- `/my_rating` — prints your rating
+
 Enjoy!
 
 ```
@@ -75,6 +84,12 @@ Enjoy!
 - [kotlin-telegram-bot](https://github.com/kotlin-telegram-bot/kotlin-telegram-bot)
 - [Exposed](https://github.com/JetBrains/Exposed)
 - [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc)
+
+## TODO
+
+- Sort `/rating` descending on the DB level
+- Make `/rating` print only current group members
+- Add the «Rice Plate» & «Cat Wife» rewards
 
 ## License
 

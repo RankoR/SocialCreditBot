@@ -124,14 +124,14 @@ private fun getBotToken(propertiesFilePath: String): String {
 private fun Bot.sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, chatId: Long, user: User) {
     if (previousCredit >= 0L && currentCredit < 0L) {
         val job = uyghurCampJobs.random()
-        val text = "Партия отправлять товарищ @${user.username} в санаторий для уйгур $job. Партия заботься о простой товарищ!"
+        val text = "\uD83C\uDF34 Партия отправлять товарищ @${user.username} в санаторий для уйгур $job. Партия заботься о простой товарищ! \uD83D\uDC6E️"
 
         sendMessage(
             chatId = ChatId.fromId(chatId),
             text = text
         )
     } else if (previousCredit < 0L && currentCredit >= 0L) {
-        val text = "Партия вовзвращать товарищ @${user.username} из санаторий для уйгур."
+        val text = "\uD83C\uDFE1 Партия возвращать товарищ @${user.username} из санаторий для уйгур. Впредь будь аккуратный! \uD83D\uDC6E️"
 
         sendMessage(
             chatId = ChatId.fromId(chatId),

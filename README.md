@@ -1,6 +1,6 @@
 # Social Credit Bot
 
-![Docker Image Version (latest semver)](https://img.shields.io/docker/v/rankor777/social-credit-bot)
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/rankor777/social-credit-bot)](https://hub.docker.com/r/rankor777/social-credit-bot)
 
 Simple Social credit bot for Telegram written in Kotlin.
 

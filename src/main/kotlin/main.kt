@@ -1,9 +1,11 @@
+import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.entities.User
 import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
@@ -79,11 +81,19 @@ fun main(args: Array<String>) {
                 }
 
                 message.replyToMessage?.from?.let { user ->
+                    val previousCredit = ratingsRepository.getRating(user.id)?.rating ?: 0L
                     val info = ratingsRepository.changeRating(user.id, user.username ?: "-", socialCreditChange)
 
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
                         text = "@${user.username} $socialCreditChangeText\nТекущий социальный рейтинг: ${info.rating}"
+                    )
+
+                    bot.sendToUyghurCampIfNeeded(
+                        previousCredit = previousCredit,
+                        currentCredit = info.rating,
+                        chatId = message.chat.id,
+                        user = user
                     )
                 }
             }
@@ -99,6 +109,26 @@ private fun getBotToken(propertiesFilePath: String): String {
         }
         .getProperty(PROPERTY_BOT_TOKEN)
         ?: throw IllegalStateException("Property named \"$PROPERTY_BOT_TOKEN\" not found in $propertiesFilePath")
+}
+
+// https://www.aspi.org.au/report/uyghurs-sale
+private fun Bot.sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, chatId: Long, user: User) {
+    if (previousCredit >= 0L && currentCredit < 0L) {
+        val job = uyghurCampJobs.random()
+        val text = "Партия отправлять товарищ @${user.username} в санаторий для уйгур $job. Партия заботься о простой товарищ!"
+
+        sendMessage(
+            chatId = ChatId.fromId(chatId),
+            text = text
+        )
+    } else if (previousCredit < 0L && currentCredit >= 0L) {
+        val text = "Партия вовзвращать товарищ @${user.username} из санаторий для уйгур."
+
+        sendMessage(
+            chatId = ChatId.fromId(chatId),
+            text = text
+        )
+    }
 }
 
 private fun Message.getSocialCreditChange(): Long? {

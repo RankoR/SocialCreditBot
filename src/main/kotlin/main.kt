@@ -73,6 +73,15 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
+                if (message.replyToMessage?.from?.username == "CCPSocialCreditBot") { // Dirty hack, IDK how to get self ID
+                    bot.sendMessage(
+                        chatId = ChatId.fromId(message.chat.id),
+                        text = "\uD83D\uDEAB Простой товарищ не может изменять рейтинг великий партия! Великий лидер Xi есть следить за тобой!"
+                    )
+
+                    return@message
+                }
+
                 val socialCreditChange = message.getSocialCreditChange() ?: return@message
                 val socialCreditChangeText = if (socialCreditChange > 0) {
                     "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг. Партия горится тобой \uD83D\uDC4D"

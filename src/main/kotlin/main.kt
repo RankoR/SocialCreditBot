@@ -28,7 +28,8 @@ fun main(args: Array<String>) {
 
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "Товарищ @${user.username}, партия сообщить, что твой социальный рейтинг составлять $userSocialCredit"
+                        text = "Товарищ ${user.printableName}, партия сообщить, что твой социальный рейтинг составлять $userSocialCredit",
+                        disableNotification = true
                     )
                 }
             }
@@ -47,15 +48,16 @@ fun main(args: Array<String>) {
 
                 ratings.forEach { (username, credit) ->
                     if (credit > 0) {
-                        stringBuilder.append("\uD83D\uDC4D Партия гордится товарищ @$username с рейтинг $credit\n")
+                        stringBuilder.append("\uD83D\uDC4D Партия гордится товарищ $username с рейтинг $credit\n")
                     } else {
-                        stringBuilder.append("\uD83D\uDC4E Ну и ну! Товарищ @$username разочаровывай партия своим рейтинг $credit\n")
+                        stringBuilder.append("\uD83D\uDC4E Ну и ну! Товарищ $username разочаровывай партия своим рейтинг $credit\n")
                     }
                 }
 
                 bot.sendMessage(
                     chatId = ChatId.fromId(message.chat.id),
-                    text = stringBuilder.toString()
+                    text = stringBuilder.toString(),
+                    disableNotification = true
                 )
             }
 
@@ -67,7 +69,8 @@ fun main(args: Array<String>) {
                 if (message.from?.id == message.replyToMessage?.from?.id) {
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "\uD83D\uDEAB Партия запрещать изменять свой рейтинг. Великий лидер Xi есть следить за тобой!"
+                        text = "\uD83D\uDEAB Партия запрещать изменять свой рейтинг. Великий лидер Xi есть следить за тобой!",
+                        disableNotification = true
                     )
 
                     return@message
@@ -76,7 +79,8 @@ fun main(args: Array<String>) {
                 if (message.replyToMessage?.from?.username == "CCPSocialCreditBot") { // Dirty hack, IDK how to get self ID
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "\uD83D\uDEAB Простой товарищ не может изменять рейтинг великий партия! Великий лидер Xi есть следить за тобой!"
+                        text = "\uD83D\uDEAB Простой товарищ не может изменять рейтинг великий партия! Великий лидер Xi есть следить за тобой!",
+                        disableNotification = true
                     )
 
                     return@message
@@ -95,7 +99,8 @@ fun main(args: Array<String>) {
 
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "@${user.username} $socialCreditChangeText\nТекущий социальный рейтинг: ${info.rating}"
+                        text = "${user.printableName} $socialCreditChangeText\nТекущий социальный рейтинг: ${info.rating}",
+                        disableNotification = true
                     )
 
                     bot.sendToUyghurCampIfNeeded(
@@ -124,18 +129,20 @@ private fun getBotToken(propertiesFilePath: String): String {
 private fun Bot.sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, chatId: Long, user: User) {
     if (previousCredit >= 0L && currentCredit < 0L) {
         val job = uyghurCampJobs.random()
-        val text = "\uD83C\uDF34 Партия отправлять товарищ @${user.username} в санаторий для уйгур $job. Партия заботься о простой товарищ! \uD83D\uDC6E️"
+        val text = "\uD83C\uDF34 Партия отправлять товарищ ${user.printableName} в санаторий для уйгур $job. Партия заботься о простой товарищ! \uD83D\uDC6E️"
 
         sendMessage(
             chatId = ChatId.fromId(chatId),
-            text = text
+            text = text,
+            disableNotification = true
         )
     } else if (previousCredit < 0L && currentCredit >= 0L) {
-        val text = "\uD83C\uDFE1 Партия возвращать товарищ @${user.username} из санаторий для уйгур. Впредь будь аккуратный! \uD83D\uDC6E️"
+        val text = "\uD83C\uDFE1 Партия возвращать товарищ ${user.printableName} из санаторий для уйгур. Впредь будь аккуратный! \uD83D\uDC6E️"
 
         sendMessage(
             chatId = ChatId.fromId(chatId),
-            text = text
+            text = text,
+            disableNotification = true
         )
     }
 }
@@ -147,3 +154,6 @@ private fun Message.getSocialCreditChange(): Long? {
         else -> null
     }
 }
+
+private val User.printableName: String
+    get() = username ?: ""

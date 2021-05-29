@@ -1,4 +1,3 @@
-import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
@@ -87,27 +86,40 @@ fun main(args: Array<String>) {
                 }
 
                 val socialCreditChange = message.getSocialCreditChange() ?: return@message
-                val socialCreditChangeText = if (socialCreditChange > 0) {
-                    "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг. Партия горится тобой \uD83D\uDC4D"
-                } else {
-                    "Минус ${socialCreditChange.absoluteValue} социальный рейтинг. Ты разочаровываешь партию \uD83D\uDE1E"
-                }
 
                 message.replyToMessage?.from?.let { user ->
                     val previousCredit = ratingsRepository.getRating(user.id)?.rating ?: 0L
                     val info = ratingsRepository.changeRating(user.id, user.username ?: "-", socialCreditChange)
 
-                    bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text = "${user.printableName} $socialCreditChangeText\nТекущий социальный рейтинг: ${info.rating}",
-                        disableNotification = true
-                    )
+                    val socialCreditChangeText = if (socialCreditChange > 0) {
+                        "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Партия горится тобой \uD83D\uDC4D"
+                    } else {
+                        "Минус ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Ты разочаровываешь партию \uD83D\uDE1E"
+                    }
 
-                    bot.sendToUyghurCampIfNeeded(
+                    val sendToUyghurCamp = sendToUyghurCampIfNeeded(
                         previousCredit = previousCredit,
                         currentCredit = info.rating,
-                        chatId = message.chat.id,
                         user = user
+                    )
+
+                    val messageBuilder = StringBuilder().apply {
+                        append(socialCreditChangeText)
+                        append("\n")
+                        append("Текущий социальный рейтинг: ")
+                        append(info.rating)
+
+                        sendToUyghurCamp?.let {
+                            append("\n\n")
+                            append(it)
+                        }
+                    }
+
+
+                    bot.sendMessage(
+                        chatId = ChatId.fromId(message.chat.id),
+                        text = messageBuilder.toString(),
+                        disableNotification = true
                     )
                 }
             }
@@ -126,24 +138,18 @@ private fun getBotToken(propertiesFilePath: String): String {
 }
 
 // https://www.aspi.org.au/report/uyghurs-sale
-private fun Bot.sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, chatId: Long, user: User) {
-    if (previousCredit >= 0L && currentCredit < 0L) {
-        val job = uyghurCampJobs.random()
-        val text = "\uD83C\uDF34 Партия отправлять товарищ ${user.printableName} в санаторий для уйгур $job. Партия заботься о простой товарищ! \uD83D\uDC6E️"
+private fun sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, user: User): String? {
+    return when {
+        previousCredit >= 0L && currentCredit < 0L -> {
+            val job = uyghurCampJobs.random()
+            "\uD83C\uDF34 Партия отправлять товарищ ${user.printableName} в санаторий для уйгур $job. Партия заботься о простой товарищ! \uD83D\uDC6E️"
+        }
 
-        sendMessage(
-            chatId = ChatId.fromId(chatId),
-            text = text,
-            disableNotification = true
-        )
-    } else if (previousCredit < 0L && currentCredit >= 0L) {
-        val text = "\uD83C\uDFE1 Партия возвращать товарищ ${user.printableName} из санаторий для уйгур. Впредь будь аккуратный! \uD83D\uDC6E️"
+        previousCredit < 0L && currentCredit >= 0L -> {
+            "\uD83C\uDFE1 Партия возвращать товарищ ${user.printableName} из санаторий для уйгур. Впредь будь аккуратный! \uD83D\uDC6E️"
+        }
 
-        sendMessage(
-            chatId = ChatId.fromId(chatId),
-            text = text,
-            disableNotification = true
-        )
+        else -> null
     }
 }
 

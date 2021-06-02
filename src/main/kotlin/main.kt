@@ -92,7 +92,7 @@ fun main(args: Array<String>) {
                     val info = ratingsRepository.changeRating(user.id, user.username ?: "-", socialCreditChange)
 
                     val socialCreditChangeText = if (socialCreditChange > 0) {
-                        "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Партия горится тобой \uD83D\uDC4D"
+                        "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Партия гордится тобой \uD83D\uDC4D"
                     } else {
                         "Минус ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Ты разочаровываешь партию \uD83D\uDE1E"
                     }

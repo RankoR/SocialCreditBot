@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "pro.labster"
-version = "1.0.5"
+version = "1.0.6"
 
 repositories {
     mavenCentral()
@@ -16,9 +16,9 @@ repositories {
 dependencies {
     implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.0.4")
 
-    implementation("org.jetbrains.exposed:exposed-core:0.31.1")
-    implementation("org.jetbrains.exposed:exposed-dao:0.31.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.31.1")
+    implementation("org.jetbrains.exposed:exposed-core:0.32.1")
+    implementation("org.jetbrains.exposed:exposed-dao:0.32.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.32.1")
 
     implementation("org.xerial:sqlite-jdbc:3.34.0")
 }

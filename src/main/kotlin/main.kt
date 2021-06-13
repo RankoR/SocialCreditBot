@@ -154,9 +154,12 @@ private fun sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, 
 }
 
 private fun Message.getSocialCreditChange(): Long? {
+    print("ID: ${sticker?.fileUniqueId}")
+
     return when {
         plusSocialCreditStickers.contains(sticker?.fileUniqueId) -> DEFAULT_PLUS_CREDIT
         minusSocialCreditStickers.contains(sticker?.fileUniqueId) -> DEFAULT_MINUS_CREDIT
+        plusRicePlateStickers.contains(sticker?.fileUniqueId) -> DEFAULT_PLUS_RICE_PLATE_CREDIT
         else -> null
     }
 }
